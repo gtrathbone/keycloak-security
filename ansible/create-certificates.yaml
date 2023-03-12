@@ -1,0 +1,30 @@
+---
+- name: Create CA
+  hosts: localhost
+  vars:
+    - certificate_path: ./certificates
+    - cert_authorities:
+        test_ca:
+          cn: "Test CA"
+          password: "password_ca"
+          truststore_password: "password_trust"
+    - certs:
+        - name: "server_1"
+          cn: "application 1"
+          password: "password_server_1"
+          sans:
+            - "DNS:a.b"
+            - "DNS:c.a"
+          type: "serverAuth"
+          ca: "test_ca"
+        - name: "client_1"
+          cn: "CN=Client 1,O=Test,C=AU"
+          password: "password_client_1"
+          sans: []
+          type: "clientAuth"
+          ca: "test_ca"
+
+  roles:
+    - role: ca
+      ca_local: "{{ cert_authorities }}"
+      certs_local: "{{ certs }}"
